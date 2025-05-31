@@ -5,6 +5,9 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
+	ssr: {
+		noExternal: ['layercake', 'd3-scale', 'd3-shape', 'd3-array']
+	},
 	test: {
 		workspace: [
 			{

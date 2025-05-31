@@ -1,3 +1,168 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
+
+/* Custom CSS variables for shadcn-svelte */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  *, ::before, ::after {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+/* Global placeholder text styling for metal theme */
+@layer components {
+  .metal-input::placeholder,
+  .metal-input::-webkit-input-placeholder,
+  .metal-input::-moz-placeholder,
+  .metal-input:-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+  
+  /* Override shadcn placeholder colors for metal inputs */
+  input[class*="metal"]::placeholder,
+  textarea[class*="metal"]::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* Fix number input placeholder text specifically */
+  input[type="number"][class*="metal"]::placeholder,
+  input[type="number"][class*="metal"]::-webkit-input-placeholder,
+  input[type="number"][class*="metal"]::-moz-placeholder,
+  input[type="number"][class*="metal"]:-ms-input-placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* Fix date input placeholder text */
+  input[type="date"][class*="metal"]::-webkit-datetime-edit-text,
+  input[type="date"][class*="metal"]::-webkit-datetime-edit-month-field,
+  input[type="date"][class*="metal"]::-webkit-datetime-edit-day-field,
+  input[type="date"][class*="metal"]::-webkit-datetime-edit-year-field {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  input[type="date"][class*="metal"]::-webkit-datetime-edit {
+    color: white !important;
+  }
+
+  input[type="date"][class*="metal"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.6;
+  }
+
+  /* Fix Select trigger placeholder text */
+  [data-placeholder] span {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  /* Fix select value text */
+  .metal-input [data-select-value] {
+    color: white !important;
+  }
+
+  /* Remove checkmarks from select items */
+  [data-state="checked"] [data-icon] {
+    display: none !important;
+  }
+
+  /* Alternative approach to remove checkmarks */
+  .metal-dropdown-item[data-state="checked"]::before,
+  .metal-dropdown-item[data-state="checked"] svg {
+    display: none !important;
+  }
+
+  /* Target the specific shadcn select item indicator */
+  [data-select-item] .absolute.left-2,
+  [data-select-item] span:first-child {
+    display: none !important;
+  }
+
+  /* Remove left padding since we're hiding the indicator */
+  .metal-dropdown-item[data-select-item] {
+    padding-left: 1rem !important;
+  }
+
+  /* Global metal component overrides for shadcn */
+  .metal-input.border-input,
+  input[class*="metal"].border-input,
+  textarea[class*="metal"].border-input {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+  }
+
+  .metal-input.border-input:focus,
+  input[class*="metal"].border-input:focus,
+  textarea[class*="metal"].border-input:focus {
+    border: 1px solid #2563eb !important;
+    color: white !important;
+  }
+
+  /* Ensure metal cards override shadcn card styling */
+  .metal-card.bg-card {
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  }
+
+  /* Override any shadcn text colors in metal components */
+  .metal-input.text-foreground,
+  [class*="metal"] .text-foreground {
+    color: white !important;
+  }
+
+  /* Override shadcn select trigger in metal components */
+  [data-select-trigger].metal-input {
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+  }
+
+  [data-select-trigger].metal-input:focus {
+    border: 1px solid #2563eb !important;
+  }
+}
