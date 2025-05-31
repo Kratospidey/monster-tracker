@@ -505,14 +505,15 @@
 	}
 
 	/* Buttons */
-	.metal-button-ghost {
+	/* Used for mobile menu button and other ghost-style buttons throughout the app */
+	:global(.metal-button-ghost) {
 		background: transparent;
 		border: 1px solid transparent;
 		color: white;
 		transition: all 0.3s ease;
 	}
 
-	.metal-button-ghost:hover {
+	:global(.metal-button-ghost:hover) {
 		background: linear-gradient(
 			145deg,
 			rgba(255, 255, 255, 0.1) 0%,
@@ -525,7 +526,8 @@
 			0 1px 0 rgba(255, 255, 255, 0.05);
 	}
 
-	.metal-button-secondary {
+	/* Used for secondary action buttons throughout the app */
+	:global(.metal-button-secondary) {
 		background: linear-gradient(135deg, #64748b 0%, #475569 30%, #334155 70%, #475569 100%);
 		color: #f8fafc;
 		border: 1px solid #334155;
@@ -542,7 +544,7 @@
 		cursor: pointer;
 	}
 
-	.metal-button-secondary:hover {
+	:global(.metal-button-secondary:hover) {
 		background: linear-gradient(135deg, #475569 0%, #334155 30%, #1e293b 70%, #334155 100%);
 		transform: translateY(-1px);
 		box-shadow:
@@ -551,7 +553,7 @@
 			0 1px 0 rgba(255, 255, 255, 0.1);
 	}
 
-	.metal-button-secondary:active {
+	:global(.metal-button-secondary:active) {
 		transform: translateY(0);
 		box-shadow:
 			0 1px 2px rgba(0, 0, 0, 0.2),

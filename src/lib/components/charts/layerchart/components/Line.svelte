@@ -41,7 +41,5 @@
 {/if}
 
 <style>
-	.line-path {
-		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-	}
+	/* No unused CSS selectors */
 </style>

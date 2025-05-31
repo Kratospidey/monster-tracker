@@ -35,14 +35,21 @@ export const load: LayoutLoad = async ({ data, depends, fetch }) => {
   );
 
   /**
-   * It's fine to use `getSession` here, because on the client, `getSession` is
-   * safe, and on the server, it's guaranteed to return `null`.
-   *
-   * https://docs.supabase.com/docs/guides/auth/server-side/nextjs#creating-a-supabase-client
+   * Using getUser() instead of getSession() to ensure JWT validation
+   * and avoid deprecation warnings.
    */
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+    error
+  } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error("Error getting user in layout load:", error);
+    return { supabase, session: null };
+  }
+
+  // Create session object with user if user exists
+  const session = user ? { user } : null;
 
   return { supabase, session };
 }; 

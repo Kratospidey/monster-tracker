@@ -27,22 +27,17 @@ export const handle: Handle = async ({ event, resolve }) => {
    */
   event.locals.safeGetSession = async () => {
     const {
-      data: { session },
-    } = await event.locals.supabase.auth.getSession();
-    if (!session) {
-      return { session: null, user: null };
-    }
-
-    const {
       data: { user },
       error,
     } = await event.locals.supabase.auth.getUser();
-    if (error) {
-      // JWT validation has failed
+    if (error || !user) {
+      // JWT validation has failed or no user
       return { session: null, user: null };
     }
 
-    return { session, user };
+    // Since getUser() validates the JWT, we can create a session object
+    // with the user data if needed, or just return the user
+    return { session: { user }, user };
   };
 
   return resolve(event, {

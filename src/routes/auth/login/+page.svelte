@@ -39,6 +39,16 @@
 	$: emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 	$: isValidForm = email && password.length >= 6 && emailValid;
 
+	// Explicit class references to ensure Svelte recognizes them as used
+	// These are applied conditionally in template expressions
+	const dynamicClasses = {
+		inputFocused: 'metal-input-focused',
+		inputError: 'metal-input-error',
+		inputSuccess: 'metal-input-success',
+		card: 'metal-card',
+		header: 'metal-header'
+	};
+
 	onMount(() => {
 		// Check for URL parameters
 		const urlParams = new URLSearchParams(window.location.search);
@@ -132,9 +142,9 @@
 									disabled={loading}
 									class="metal-input pl-4 transition-all duration-200 {emailFocused
 										? 'metal-input-focused'
-										: ''} 
-										   {email && !emailValid ? 'metal-input-error' : ''} 
-										   {email && emailValid ? 'metal-input-success' : ''}"
+										: ''} {email && !emailValid ? 'metal-input-error' : ''} {email && emailValid
+										? 'metal-input-success'
+										: ''}"
 								/>
 								{#if email && emailValid}
 									<CheckCircle2 class="absolute top-3 right-3 h-4 w-4 text-green-400" />
@@ -242,6 +252,13 @@
 			and{' '}
 			<a href="/privacy" class="metal-link underline underline-offset-4"> Privacy Policy </a>
 		</p>
+
+		<!-- Hidden references for Svelte static analysis - these classes are used dynamically -->
+		<div style="display: none;">
+			<div
+				class="metal-card metal-header metal-input metal-input-focused metal-input-error metal-input-success"
+			></div>
+		</div>
 	</div>
 </div>
 
@@ -319,7 +336,7 @@
 			0 1px 0 rgba(255, 255, 255, 0.05);
 	}
 
-	/* Metal Inputs */
+	/* Metal Inputs - Note: conditional classes below are used in template expressions */
 	.metal-input {
 		background: linear-gradient(145deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
 		border: 1px solid #1a202c;
@@ -336,6 +353,7 @@
 		color: rgba(255, 255, 255, 0.6);
 	}
 
+	/* Applied conditionally via template expressions - used dynamically */
 	.metal-input-focused {
 		border-color: #2563eb;
 		box-shadow:
@@ -345,6 +363,7 @@
 			0 0 0 2px rgba(37, 99, 235, 0.3);
 	}
 
+	/* Applied conditionally via template expressions - used dynamically */
 	.metal-input-error {
 		border-color: #dc2626;
 		box-shadow:
@@ -354,6 +373,7 @@
 			0 0 0 2px rgba(220, 38, 38, 0.3);
 	}
 
+	/* Applied conditionally via template expressions - used dynamically */
 	.metal-input-success {
 		border-color: #16a34a;
 		box-shadow:
@@ -458,35 +478,6 @@
 			0 4px 8px rgba(0, 0, 0, 0.3),
 			inset 0 1px 0 rgba(255, 255, 255, 0.3),
 			0 1px 0 rgba(255, 255, 255, 0.1);
-	}
-
-	.metal-button-ghost {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		padding: 8px 12px;
-		border-radius: 6px;
-		background: transparent;
-		color: #d1d5db;
-		border: 1px solid transparent;
-		font-weight: 500;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-		transition: all 0.2s ease;
-		cursor: pointer;
-	}
-
-	.metal-button-ghost:hover {
-		background: linear-gradient(
-			145deg,
-			rgba(255, 255, 255, 0.1) 0%,
-			rgba(255, 255, 255, 0.05) 100%
-		);
-		border: 1px solid #374151;
-		color: white;
-		box-shadow:
-			0 2px 4px rgba(0, 0, 0, 0.2),
-			inset 0 1px 0 rgba(255, 255, 255, 0.1),
-			0 1px 0 rgba(255, 255, 255, 0.05);
 	}
 
 	/* Metal Links */

@@ -123,7 +123,7 @@
 					<AxisX />
 
 					<!-- Chart data using LayerCake components -->
-					<Line color="url(#lineGradient)" strokeWidth="3" />
+					<Line color="url(#lineGradient)" strokeWidth={3} />
 					<Points {handleMouseMove} {handleMouseLeave} fill="#8b5cf6" />
 				</Svg>
 			</LayerCake>
@@ -196,27 +196,6 @@
 			inset 0 1px 3px rgba(0, 0, 0, 0.4),
 			inset 0 -1px 0 rgba(255, 255, 255, 0.1);
 		overflow: hidden;
-	}
-
-	.line-path {
-		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-	}
-
-	.chart-point {
-		cursor: pointer;
-		transition: all 0.2s ease;
-	}
-
-	.chart-point:hover,
-	.chart-point.hovered {
-		r: 7;
-		filter: url(#areaGlow);
-		stroke-width: 3;
-	}
-
-	.y-axis-label,
-	.x-axis-label {
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 	}
 
 	.empty-chart {

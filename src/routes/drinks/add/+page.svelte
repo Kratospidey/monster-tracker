@@ -463,10 +463,8 @@
 </div>
 
 <style>
-	@reference "tailwindcss";
-
 	/* Metal Card */
-	.metal-card {
+	:global(.metal-card) {
 		background: linear-gradient(
 			145deg,
 			rgba(255, 255, 255, 0.1) 0%,
@@ -484,7 +482,7 @@
 		-webkit-backdrop-filter: blur(20px);
 	}
 
-	.metal-header {
+	:global(.metal-header) {
 		background: linear-gradient(
 			135deg,
 			rgba(255, 255, 255, 0.1) 0%,
@@ -508,7 +506,7 @@
 	}
 
 	/* Metal Inputs */
-	.metal-input {
+	:global(.metal-input) {
 		background: linear-gradient(145deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%) !important;
 		border: 1px solid rgba(255, 255, 255, 0.1) !important;
 		color: white !important;
@@ -521,21 +519,21 @@
 		-webkit-backdrop-filter: blur(10px);
 	}
 
-	.metal-input::placeholder {
+	:global(.metal-input::placeholder) {
 		color: rgba(255, 255, 255, 0.6) !important;
 	}
 
 	/* Ensure input text is always white and override all shadcn defaults */
-	.metal-input,
-	.metal-input:focus,
-	.metal-input:active,
-	input.metal-input,
-	textarea.metal-input {
+	:global(.metal-input),
+	:global(.metal-input:focus),
+	:global(.metal-input:active),
+	:global(input.metal-input),
+	:global(textarea.metal-input) {
 		color: white !important;
 		border-color: rgba(255, 255, 255, 0.1) !important;
 	}
 
-	.metal-input:focus {
+	:global(.metal-input:focus) {
 		outline: none !important;
 		border-color: #2563eb !important;
 		box-shadow:
@@ -624,7 +622,7 @@
 	}
 
 	/* Metal Separators */
-	.metal-separator {
+	:global(.metal-separator) {
 		height: 1px;
 		background: linear-gradient(
 			90deg,
@@ -639,7 +637,7 @@
 	}
 
 	/* Metal Badges */
-	.metal-badge {
+	:global(.metal-badge) {
 		background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
 		color: white;
 		border: 1px solid #2d3748;
@@ -651,7 +649,7 @@
 	}
 
 	/* Metal Buttons */
-	.metal-button-ghost:hover {
+	:global(.metal-button-ghost:hover) {
 		background: linear-gradient(
 			135deg,
 			rgba(255, 255, 255, 0.1) 0%,
@@ -746,7 +744,7 @@
 		-webkit-backdrop-filter: blur(20px);
 	}
 
-	.metal-dropdown-item {
+	:global(.metal-dropdown-item) {
 		border: none;
 		background: transparent;
 		color: white;
@@ -754,15 +752,15 @@
 		padding-left: 1rem !important; /* Remove space for hidden indicator */
 	}
 
-	.metal-dropdown-item:hover {
+	:global(.metal-dropdown-item:hover) {
 		background: rgba(255, 255, 255, 0.1) !important;
 	}
 
-	.metal-dropdown-item[data-highlighted] {
+	:global(.metal-dropdown-item[data-highlighted]) {
 		background: rgba(255, 255, 255, 0.1) !important;
 	}
 
-	.metal-dropdown-item[data-state='checked'] {
+	:global(.metal-dropdown-item[data-state='checked']) {
 		background: rgba(255, 255, 255, 0.2) !important;
 		font-weight: 500;
 	}
@@ -1040,7 +1038,7 @@
 	}
 
 	/* Blue checked background for peer-checked states */
-	.peer:checked ~ .bg-blue-checked {
+	:global(.peer:checked ~ .bg-blue-checked) {
 		background: linear-gradient(
 			135deg,
 			rgba(59, 130, 246, 0.2),

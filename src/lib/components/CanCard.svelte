@@ -131,26 +131,36 @@
 		<div class="image-section">
 			{#if can.imageUrl}
 				<div class="image-frame">
-					<img
-						src={can.imageUrl}
-						alt={can.name}
-						class="can-image"
+					<button
+						type="button"
 						on:click={handleImageClick}
-						on:error={handleImageLoadError}
-						on:load={handleImageLoad}
-					/>
+						class="can-image-button"
+						aria-label="Change can image"
+					>
+						<img
+							src={can.imageUrl}
+							alt={can.name}
+							class="can-image"
+							on:error={handleImageLoadError}
+							on:load={handleImageLoad}
+						/>
+					</button>
 					<!-- Remove button with glass effect -->
-					<button class="remove-btn" on:click={handleRemoveImage} title="Remove image">
+					<button
+						class="remove-btn"
+						on:click={handleRemoveImage}
+						title="Remove image"
+						aria-label="Remove can image"
+					>
 						<span class="remove-icon">✕</span>
 					</button>
 				</div>
 			{:else}
-				<div
+				<button
 					class="upload-area"
+					type="button"
 					on:click={handleImageClick}
-					role="button"
-					tabindex="0"
-					on:keydown={(e) => e.key === 'Enter' && handleImageClick()}
+					aria-label="Upload can image"
 				>
 					{#if uploading}
 						<div class="upload-icon pulse">⏳</div>
@@ -159,7 +169,7 @@
 						<div class="upload-icon">📷</div>
 						<p class="upload-text">Add Image</p>
 					{/if}
-				</div>
+				</button>
 			{/if}
 		</div>
 
@@ -288,13 +298,19 @@
 		border: 2px solid rgba(255, 255, 255, 0.1);
 	}
 
+	.can-image-button {
+		@apply block h-full w-full cursor-pointer border-0 bg-transparent p-0;
+		/* Ensure it fills the frame and has no default button styling */
+	}
+
 	.can-image {
-		@apply h-full w-full cursor-pointer object-cover;
+		@apply h-full w-full object-cover;
 		@apply transition-all duration-300;
 		filter: brightness(1.1) contrast(1.05) saturate(1.1);
 	}
 
-	.can-image:hover {
+	.can-image-button:hover .can-image, /* Apply hover to image when button is hovered */
+	.can-image-button:focus .can-image {
 		@apply scale-105;
 		filter: brightness(1.2) contrast(1.1) saturate(1.2);
 	}
@@ -327,6 +343,7 @@
 		@apply flex flex-col items-center justify-center;
 		@apply cursor-pointer transition-all duration-300;
 		@apply border-2 border-dashed;
+		@apply bg-transparent;
 		background: linear-gradient(135deg, rgba(51, 65, 85, 0.5), rgba(30, 41, 59, 0.5));
 		border-color: rgba(100, 116, 139, 0.3);
 		color: rgb(203, 213, 225);

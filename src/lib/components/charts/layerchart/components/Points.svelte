@@ -37,6 +37,9 @@
 			filter="url(#dropShadow)"
 			class="data-point"
 			style="cursor: pointer;"
+			role="button"
+			tabindex="0"
+			aria-label="Data point {i + 1}"
 			on:mouseenter={(e) => handleMouseMove(e, d)}
 			on:mouseleave={handleMouseLeave}
 		/>
