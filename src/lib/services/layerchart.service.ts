@@ -212,4 +212,33 @@ export class LayerChartService {
       yKey: 'total'
     };
   }
+
+  /**
+   * Transform CanLibraryItem data for a pie chart showing can distribution.
+   */
+  static getCanDistributionData(canLibraryItems: any[]): LayerChartData {
+    if (canLibraryItems.length === 0) {
+      return {
+        data: [],
+        xKey: 'name',
+        yKey: 'value'
+      };
+    }
+
+    const data = canLibraryItems.map(item => ({
+      name: `${item.name} (${item.series})`, // Unique name for the chart
+      value: item.count,
+      series: item.series // Keep series for potential coloring
+    }));
+
+    // Sort by count in descending order to make the chart more readable
+    data.sort((a, b) => b.value - a.value);
+
+    return {
+      data,
+      // Define keys for common pie chart libraries, adjust as needed
+      xKey: 'name', // or 'label'
+      yKey: 'value', // or 'count'
+    };
+  }
 } 

@@ -22,7 +22,7 @@
 			font-weight="500"
 			class="y-axis-label"
 		>
-			${tick.toFixed(0)}
+			{tick.toFixed(0)}
 		</text>
 	</g>
 {/each}

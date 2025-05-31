@@ -2,15 +2,18 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { DrinkService } from '$lib/services/drink.service';
+	import { LibraryService, type CanLibraryItem } from '$lib/services/library.service';
 	import type { Drink } from '$lib/types/drink';
 	import SpendingOverTimeChart from '$lib/components/charts/layerchart/SpendingOverTimeChart.svelte';
 	import DrinksBySeriesChart from '$lib/components/charts/layerchart/DrinksBySeriesChart.svelte';
 	import RatingDistributionChart from '$lib/components/charts/layerchart/RatingDistributionChart.svelte';
 	import DayOfWeekChart from '$lib/components/charts/layerchart/DayOfWeekChart.svelte';
 	import CumulativeTotalChart from '$lib/components/charts/layerchart/CumulativeTotalChart.svelte';
+	import CanDistributionChart from '$lib/components/charts/layerchart/CanDistributionChart.svelte';
 	import ChartShimmerLoader from '$lib/components/ui/ChartShimmerLoader.svelte';
 
 	let drinks: Drink[] = [];
+	let canLibraryItems: CanLibraryItem[] = [];
 	let loading = true;
 	let error: string | null = null;
 	let drinkService = new DrinkService();
@@ -28,7 +31,11 @@
 				throw new Error('User not authenticated');
 			}
 
-			drinks = await drinkService.getAllDrinks();
+			[drinks, canLibraryItems] = await Promise.all([
+				drinkService.getAllDrinks(),
+				LibraryService.getCanLibrary()
+			]);
+
 			calculateQuickStats();
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to load drinks data';
@@ -81,7 +88,7 @@
 
 			<div class="charts-container">
 				<div class="charts-grid">
-					{#each Array(5) as _}
+					{#each Array(6) as _}
 						<ChartShimmerLoader height="350px" />
 					{/each}
 				</div>
@@ -152,6 +159,7 @@
 					<RatingDistributionChart {drinks} />
 					<DayOfWeekChart {drinks} />
 					<CumulativeTotalChart {drinks} />
+					<CanDistributionChart {canLibraryItems} />
 				</div>
 			</div>
 		{/if}

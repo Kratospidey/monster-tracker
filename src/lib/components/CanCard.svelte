@@ -277,7 +277,7 @@
 	}
 
 	.image-section {
-		@apply relative aspect-square p-3;
+		@apply relative p-2;
 		background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
 	}
 

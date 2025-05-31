@@ -382,9 +382,9 @@
 		{#if loading}
 			<!-- Shimmer loading for cards -->
 			<div
-				class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+				class="grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
 			>
-				{#each Array(8) as _}
+				{#each Array(12) as _}
 					<div class="metal-card animate-pulse p-4">
 						<div class="space-y-3">
 							<div class="shimmer h-48 rounded-lg bg-gray-300"></div>
@@ -415,7 +415,7 @@
 			</div>
 		{:else}
 			<div
-				class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+				class="grid grid-cols-1 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
 			>
 				{#each filteredCans as can (can.id)}
 					<CanCard {can} on:imageUpdated={handleImageUpdated} />
