@@ -73,8 +73,12 @@
 <div class="skeumorphic-page">
 	<div class="page-header">
 		<div class="mb-4 flex items-center justify-center space-x-3">
-			<div class="metal-logo flex h-10 w-10 items-center justify-center rounded-lg">
-				<span class="text-xl font-bold text-white drop-shadow">M</span>
+			<div
+				class="metal-logo relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:transform hover:shadow-lg"
+			>
+				<span class="relative z-10 text-xl font-bold text-white drop-shadow">M</span>
+				<!-- Glossy reflection that appears on hover -->
+				<div class="logo-glossy-reflection"></div>
 			</div>
 			<h1 class="page-title">Analytics Dashboard</h1>
 		</div>
@@ -124,7 +128,7 @@
 				<div class="stat-card total-spent">
 					<div class="stat-icon">💰</div>
 					<div class="stat-content">
-						<div class="stat-value">${totalSpent.toFixed(2)}</div>
+						<div class="stat-value">₹{totalSpent.toFixed(2)}</div>
 						<div class="stat-label">Total Spent</div>
 					</div>
 				</div>
@@ -196,6 +200,32 @@
 			0 4px 8px rgba(21, 128, 61, 0.4),
 			inset 0 1px 0 rgba(255, 255, 255, 0.3),
 			0 1px 0 rgba(255, 255, 255, 0.1);
+	}
+
+	.metal-logo:hover {
+		box-shadow:
+			0 6px 12px rgba(21, 128, 61, 0.5),
+			inset 0 1px 0 rgba(255, 255, 255, 0.4),
+			0 1px 0 rgba(255, 255, 255, 0.15);
+	}
+
+	.logo-glossy-reflection {
+		position: absolute;
+		inset: 0;
+		border-radius: 0.5rem;
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.4) 0%,
+			rgba(255, 255, 255, 0.2) 25%,
+			transparent 50%
+		);
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.metal-logo:hover .logo-glossy-reflection {
+		opacity: 1;
 	}
 
 	.page-title {

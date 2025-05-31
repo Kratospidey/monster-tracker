@@ -81,8 +81,12 @@
 					<!-- App Title -->
 					<div class="flex items-center">
 						<a href="/" class="flex items-center space-x-2 transition-opacity hover:opacity-80">
-							<div class="metal-logo flex h-8 w-8 items-center justify-center rounded-lg">
-								<span class="text-lg font-bold text-white drop-shadow">M</span>
+							<div
+								class="metal-logo relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:transform hover:shadow-lg"
+							>
+								<span class="relative z-10 text-lg font-bold text-white drop-shadow">M</span>
+								<!-- Glossy reflection that appears on hover -->
+								<div class="logo-glossy-reflection"></div>
 							</div>
 							<h1 class="metal-text text-xl font-bold text-white drop-shadow-lg">
 								Monster Tracker
@@ -265,6 +269,32 @@
 			0 4px 8px rgba(21, 128, 61, 0.4),
 			inset 0 1px 0 rgba(255, 255, 255, 0.3),
 			0 1px 0 rgba(255, 255, 255, 0.1);
+	}
+
+	.metal-logo:hover {
+		box-shadow:
+			0 6px 12px rgba(21, 128, 61, 0.5),
+			inset 0 1px 0 rgba(255, 255, 255, 0.4),
+			0 1px 0 rgba(255, 255, 255, 0.15);
+	}
+
+	.logo-glossy-reflection {
+		position: absolute;
+		inset: 0;
+		border-radius: 0.5rem;
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.4) 0%,
+			rgba(255, 255, 255, 0.2) 25%,
+			transparent 50%
+		);
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.metal-logo:hover .logo-glossy-reflection {
+		opacity: 1;
 	}
 
 	/* Navigation Items - Skeumorphic Style */

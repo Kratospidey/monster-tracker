@@ -80,6 +80,17 @@
 		});
 	}
 
+	function formatDateTime(dateString: string): string {
+		return new Date(dateString).toLocaleString('en-IN', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	}
+
 	function getSeriesBadgeClass(series: string): string {
 		const seriesColors = {
 			normal: '#64748b',
@@ -320,12 +331,23 @@
 								</div>
 							</div>
 							<div class="flex items-center justify-between">
-								<span class="text-sm text-gray-300 drop-shadow">{formatDate(drink.created_at)}</span
+								<span class="text-sm text-gray-300 drop-shadow"
+									>{formatDateTime(drink.consumed_at)}</span
 								>
 								<div class="flex space-x-2">
-									<a href="/drinks/{drink.id}/edit" class="metal-button-ghost-small">✏️</a>
-									<button class="metal-button-ghost-small" on:click={() => deleteDrink(drink.id)}>
-										🗑️
+									<a
+										href="/drinks/{drink.id}/edit"
+										class="metal-button-ghost text-xs"
+										style="padding: 6px 12px;"
+									>
+										Edit
+									</a>
+									<button
+										class="metal-button-ghost text-xs text-red-400"
+										style="padding: 6px 12px;"
+										on:click={() => deleteDrink(drink.id)}
+									>
+										Delete
 									</button>
 								</div>
 							</div>
@@ -337,7 +359,7 @@
 								<div>
 									<h3 class="font-semibold text-white drop-shadow">{drink.name}</h3>
 									<span class="text-sm text-gray-300 drop-shadow"
-										>{formatDate(drink.created_at)}</span
+										>{formatDateTime(drink.consumed_at)}</span
 									>
 								</div>
 								<div>
@@ -364,9 +386,19 @@
 								</div>
 							</div>
 							<div class="ml-4 flex items-center space-x-2">
-								<a href="/drinks/{drink.id}/edit" class="metal-button-ghost">✏️ Edit</a>
-								<button class="metal-button-ghost" on:click={() => deleteDrink(drink.id)}>
-									🗑️ Delete
+								<a
+									href="/drinks/{drink.id}/edit"
+									class="metal-button-ghost text-xs"
+									style="padding: 6px 12px;"
+								>
+									Edit
+								</a>
+								<button
+									class="metal-button-ghost text-xs text-red-400"
+									style="padding: 6px 12px;"
+									on:click={() => deleteDrink(drink.id)}
+								>
+									Delete
 								</button>
 							</div>
 						</div>

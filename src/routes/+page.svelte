@@ -44,6 +44,17 @@
 		});
 	}
 
+	function formatDateTime(dateString: string): string {
+		return new Date(dateString).toLocaleString('en-IN', {
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	}
+
 	function getSeriesBadgeClass(series: string): string {
 		const seriesColors = {
 			normal: '#64748b',
@@ -252,7 +263,7 @@
 											</span>
 											<span class="text-sm text-gray-300 drop-shadow">•</span>
 											<span class="text-sm text-gray-300 drop-shadow">
-												{formatDate(drink.created_at)}
+												{formatDateTime(drink.consumed_at)}
 											</span>
 										</div>
 									</div>
@@ -277,35 +288,101 @@
 		</CardContent>
 	</Card>
 
-	<!-- Charts Section (Placeholder for now) -->
+	<!-- Quick Actions & Daily Summary Section -->
 	<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+		<!-- Quick Actions -->
 		<Card class="metal-card">
 			<CardHeader class="metal-header">
-				<CardTitle class="text-white drop-shadow-lg">Spending Over Time</CardTitle>
+				<CardTitle class="text-white drop-shadow-lg">Quick Actions</CardTitle>
 			</CardHeader>
-			<CardContent>
-				<div class="metal-chart-placeholder flex h-64 items-center justify-center rounded-lg">
-					<div class="text-center text-gray-300">
-						<div class="loading-pulse mb-2 text-2xl drop-shadow">📈</div>
-						<p class="drop-shadow">Chart coming soon...</p>
-						<div class="mt-2 text-xs opacity-60">Data visualization in development</div>
-					</div>
+			<CardContent class="space-y-4">
+				<div class="grid grid-cols-2 gap-3">
+					<a href="/drinks/add" class="metal-quick-action-button">
+						<div class="action-icon">➕</div>
+						<span class="action-text">Add Drink</span>
+					</a>
+					<a href="/charts" class="metal-quick-action-button">
+						<div class="action-icon">📊</div>
+						<span class="action-text">Analytics</span>
+					</a>
+					<a href="/library" class="metal-quick-action-button">
+						<div class="action-icon">📚</div>
+						<span class="action-text">Library</span>
+					</a>
+					<a href="/drinks" class="metal-quick-action-button">
+						<div class="action-icon">🥤</div>
+						<span class="action-text">All Drinks</span>
+					</a>
 				</div>
 			</CardContent>
 		</Card>
 
+		<!-- Today's Summary -->
 		<Card class="metal-card">
 			<CardHeader class="metal-header">
-				<CardTitle class="text-white drop-shadow-lg">Drinks by Series</CardTitle>
+				<CardTitle class="text-white drop-shadow-lg">Today's Summary</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<div class="metal-chart-placeholder flex h-64 items-center justify-center rounded-lg">
-					<div class="text-center text-gray-300">
-						<div class="loading-pulse mb-2 text-2xl drop-shadow">📊</div>
-						<p class="drop-shadow">Chart coming soon...</p>
-						<div class="mt-2 text-xs opacity-60">Analytics dashboard in development</div>
+				{#if loading}
+					<div class="space-y-4">
+						<div class="today-summary-skeleton">
+							<div class="skeuomorphic-loader skeleton-stat">
+								<div class="loading-shimmer"></div>
+							</div>
+						</div>
+						<div class="today-summary-skeleton">
+							<div class="skeuomorphic-loader skeleton-stat">
+								<div class="loading-shimmer"></div>
+							</div>
+						</div>
 					</div>
-				</div>
+				{:else}
+					{@const todaysDrinks = recentDrinks.filter((drink) => {
+						const today = new Date();
+						const drinkDate = new Date(drink.consumed_at);
+						return drinkDate.toDateString() === today.toDateString();
+					})}
+					{@const todaysSpent = todaysDrinks.reduce((sum, drink) => sum + drink.cost, 0)}
+
+					<div class="space-y-4">
+						<div class="today-summary-item">
+							<div class="summary-icon">🥤</div>
+							<div class="summary-content">
+								<div class="summary-label">Drinks Today</div>
+								<div class="summary-value">{todaysDrinks.length}</div>
+							</div>
+						</div>
+
+						<div class="today-summary-item">
+							<div class="summary-icon">💰</div>
+							<div class="summary-content">
+								<div class="summary-label">Spent Today</div>
+								<div class="summary-value">{formatCurrency(todaysSpent)}</div>
+							</div>
+						</div>
+
+						{#if todaysDrinks.length > 0}
+							<div class="today-summary-item">
+								<div class="summary-icon">⭐</div>
+								<div class="summary-content">
+									<div class="summary-label">Today's Avg Rating</div>
+									<div class="summary-value">
+										{(
+											todaysDrinks.reduce((sum, drink) => sum + drink.rating, 0) /
+											todaysDrinks.length
+										).toFixed(1)}
+									</div>
+								</div>
+							</div>
+						{:else}
+							<div class="empty-today-summary">
+								<div class="empty-icon">😴</div>
+								<p class="empty-text">No drinks logged today</p>
+								<a href="/drinks/add" class="metal-button-ghost">Add your first drink today</a>
+							</div>
+						{/if}
+					</div>
+				{/if}
 			</CardContent>
 		</Card>
 	</div>
@@ -482,18 +559,125 @@
 			0 1px 0 rgba(255, 255, 255, 0.05);
 	}
 
-	/* Chart Placeholders */
-	.metal-chart-placeholder {
+	/* Quick Action Buttons */
+	.metal-quick-action-button {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 16px 12px;
+		border-radius: 8px;
+		background: linear-gradient(
+			145deg,
+			rgba(255, 255, 255, 0.08) 0%,
+			rgba(255, 255, 255, 0.03) 100%
+		);
+		border: 1px solid #374151;
+		text-decoration: none;
+		color: white;
+		transition: all 0.3s ease;
+		min-height: 80px;
+		box-shadow:
+			0 2px 8px rgba(0, 0, 0, 0.2),
+			inset 0 1px 0 rgba(255, 255, 255, 0.1),
+			0 1px 0 rgba(255, 255, 255, 0.05);
+	}
+
+	.metal-quick-action-button:hover {
+		background: linear-gradient(
+			145deg,
+			rgba(255, 255, 255, 0.12) 0%,
+			rgba(255, 255, 255, 0.06) 100%
+		);
+		transform: translateY(-2px);
+		box-shadow:
+			0 4px 12px rgba(0, 0, 0, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.15),
+			0 1px 0 rgba(255, 255, 255, 0.1);
+	}
+
+	.action-icon {
+		font-size: 24px;
+		margin-bottom: 8px;
+		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+	}
+
+	.action-text {
+		font-size: 14px;
+		font-weight: 500;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	/* Today's Summary */
+	.today-summary-item {
+		display: flex;
+		align-items: center;
+		padding: 12px;
+		border-radius: 8px;
 		background: linear-gradient(
 			145deg,
 			rgba(255, 255, 255, 0.05) 0%,
 			rgba(255, 255, 255, 0.02) 100%
 		);
-		border: 1px solid #374151;
+		border: 1px solid rgba(255, 255, 255, 0.1);
 		box-shadow:
-			inset 0 2px 4px rgba(0, 0, 0, 0.3),
 			inset 0 1px 0 rgba(255, 255, 255, 0.1),
 			0 1px 0 rgba(255, 255, 255, 0.05);
+	}
+
+	.summary-icon {
+		font-size: 20px;
+		margin-right: 12px;
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+	}
+
+	.summary-content {
+		flex: 1;
+	}
+
+	.summary-label {
+		font-size: 14px;
+		color: #d1d5db;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	.summary-value {
+		font-size: 18px;
+		font-weight: 600;
+		color: white;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	.empty-today-summary {
+		text-align: center;
+		padding: 24px 16px;
+	}
+
+	.empty-icon {
+		font-size: 32px;
+		margin-bottom: 12px;
+		filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+	}
+
+	.empty-text {
+		color: #9ca3af;
+		margin-bottom: 16px;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	/* Today's Summary Skeleton */
+	.today-summary-skeleton {
+		display: flex;
+		align-items: center;
+		padding: 12px;
+		border-radius: 8px;
+		background: linear-gradient(145deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 100%);
+		border: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.skeleton-stat {
+		width: 160px;
+		height: 24px;
 	}
 
 	/* Skeuomorphic Loading States */

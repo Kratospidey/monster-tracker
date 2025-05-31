@@ -15,7 +15,7 @@
 	let loading = false;
 	let errors: Record<string, string> = {};
 
-	// Form data
+	// Form data with default values
 	let formData: DrinkFormData = {
 		name: '',
 		series: 'Normal',
@@ -23,7 +23,7 @@
 		cost: 0,
 		rating: 1,
 		notes: '',
-		created_at: new Date().toISOString().split('T')[0] // Today's date
+		consumed_at: new Date().toISOString().slice(0, 16) // Default to current date and time (YYYY-MM-DDTHH:MM format)
 	};
 
 	// Volume options
@@ -32,7 +32,7 @@
 		{ value: 350, label: '350ml', description: 'Small Can' }
 	];
 
-	// Recent drink names for autocomplete (simple implementation)
+	// Recent drink names for autocomplete
 	let recentNames: string[] = [];
 	let showNameSuggestions = false;
 
@@ -72,8 +72,8 @@
 			errors.rating = 'Rating must be between 0.5 and 5';
 		}
 
-		if (!formData.created_at) {
-			errors.created_at = 'Date is required';
+		if (!formData.consumed_at) {
+			errors.consumed_at = 'Date is required';
 		}
 
 		return Object.keys(errors).length === 0;
@@ -216,20 +216,22 @@
 		</CardHeader>
 		<CardContent class="space-y-8 p-8">
 			<form on:submit|preventDefault={handleSubmit}>
-				<!-- Date Picker -->
+				<!-- Date and Time Picker -->
 				<div class="space-y-3">
-					<Label for="date" class="text-base font-medium text-white drop-shadow">Date</Label>
+					<Label for="date" class="text-base font-medium text-white drop-shadow"
+						>Date & Time Consumed</Label
+					>
 					<Input
 						id="date"
-						type="date"
-						bind:value={formData.created_at}
-						class="metal-input h-11 {errors.created_at
+						type="datetime-local"
+						bind:value={formData.consumed_at}
+						class="metal-input h-11 {errors.consumed_at
 							? 'border-red-400 focus:ring-red-400'
 							: 'focus:border-blue-400 focus:ring-blue-400'}"
 						required
 					/>
-					{#if errors.created_at}
-						<p class="text-sm text-red-400 drop-shadow">{errors.created_at}</p>
+					{#if errors.consumed_at}
+						<p class="text-sm text-red-400 drop-shadow">{errors.consumed_at}</p>
 					{/if}
 				</div>
 

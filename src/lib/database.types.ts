@@ -13,6 +13,7 @@ export interface Database {
         Row: {
           id: string
           created_at: string
+          consumed_at: string
           name: string
           series: string
           volume_ml: number
@@ -24,6 +25,7 @@ export interface Database {
         Insert: {
           id?: string
           created_at?: string
+          consumed_at?: string
           name: string
           series: string
           volume_ml: number
@@ -35,6 +37,7 @@ export interface Database {
         Update: {
           id?: string
           created_at?: string
+          consumed_at?: string
           name?: string
           series?: string
           volume_ml?: number

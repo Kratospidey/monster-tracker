@@ -132,18 +132,15 @@
 				<strong>{tooltip.data.dateString || 'Data Point'}</strong>
 			</div>
 			<div class="tooltip-content">
-				<div class="tooltip-total">Total: ${(tooltip.data.amount || 0).toFixed(2)}</div>
-				{#if chartData.hoverData[tooltip.data.dateString]}
-					<div class="tooltip-details">
-						{#each chartData.hoverData[tooltip.data.dateString] as drink}
-							<div class="tooltip-drink">
-								<span class="drink-time">{drink.time}</span>
-								<span class="drink-name">{drink.name}</span>
-								<span class="drink-cost">${drink.cost.toFixed(2)}</span>
-							</div>
-						{/each}
-					</div>
-				{/if}
+				<div class="tooltip-total">Total: ₹{(tooltip.data.amount || 0).toFixed(2)}</div>
+				<div class="tooltip-drinks">
+					{#each tooltip.data.drinks || [] as drink}
+						<div class="tooltip-drink">
+							<span class="drink-name">{drink.name}</span>
+							<span class="drink-cost">₹{drink.cost.toFixed(2)}</span>
+						</div>
+					{/each}
+				</div>
 			</div>
 		</div>
 	{/if}
@@ -243,7 +240,7 @@
 		font-size: 16px;
 	}
 
-	.tooltip-details {
+	.tooltip-drinks {
 		margin-top: 8px;
 		border-top: 1px solid rgba(255, 255, 255, 0.2);
 		padding-top: 8px;
@@ -255,12 +252,6 @@
 		align-items: center;
 		margin-bottom: 4px;
 		font-size: 12px;
-	}
-
-	.drink-time {
-		color: rgba(255, 255, 255, 0.6);
-		font-size: 10px;
-		min-width: 50px;
 	}
 
 	.drink-name {

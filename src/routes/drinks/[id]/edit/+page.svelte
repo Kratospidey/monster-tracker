@@ -26,7 +26,7 @@
 		cost: 0,
 		rating: 1,
 		notes: '',
-		created_at: ''
+		consumed_at: ''
 	};
 
 	// Recent drink names for autocomplete
@@ -58,7 +58,7 @@
 				cost: originalDrink.cost,
 				rating: originalDrink.rating,
 				notes: originalDrink.notes || '',
-				created_at: originalDrink.created_at.split('T')[0] // Extract date part
+				consumed_at: originalDrink.consumed_at.slice(0, 16) // Extract datetime part (YYYY-MM-DDTHH:MM)
 			};
 		} catch (e) {
 			alert('Failed to load drink: ' + (e instanceof Error ? e.message : 'Unknown error'));
@@ -100,8 +100,8 @@
 			errors.rating = 'Rating must be between 1 and 5';
 		}
 
-		if (!formData.created_at) {
-			errors.created_at = 'Date is required';
+		if (!formData.consumed_at) {
+			errors.consumed_at = 'Date is required';
 		}
 
 		return Object.keys(errors).length === 0;
@@ -197,18 +197,18 @@
 			</CardHeader>
 			<CardContent class="space-y-6">
 				<form on:submit|preventDefault={handleSubmit}>
-					<!-- Date Picker -->
+					<!-- Date and Time Picker -->
 					<div class="space-y-2">
-						<Label for="date">Date</Label>
+						<Label for="date">Date & Time Consumed</Label>
 						<Input
 							id="date"
-							type="date"
-							bind:value={formData.created_at}
-							class={errors.created_at ? 'border-red-500' : ''}
+							type="datetime-local"
+							bind:value={formData.consumed_at}
+							class={errors.consumed_at ? 'border-red-500' : ''}
 							required
 						/>
-						{#if errors.created_at}
-							<p class="text-sm text-red-500">{errors.created_at}</p>
+						{#if errors.consumed_at}
+							<p class="text-sm text-red-500">{errors.consumed_at}</p>
 						{/if}
 					</div>
 

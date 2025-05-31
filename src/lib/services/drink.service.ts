@@ -10,7 +10,7 @@ export class DrinkService {
     let query = supabase
       .from('drinks')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('consumed_at', { ascending: false });
 
     // Apply filters
     if (filters?.search) {
@@ -22,11 +22,11 @@ export class DrinkService {
     }
 
     if (filters?.dateFrom) {
-      query = query.gte('created_at', filters.dateFrom);
+      query = query.gte('consumed_at', filters.dateFrom);
     }
 
     if (filters?.dateTo) {
-      query = query.lte('created_at', filters.dateTo);
+      query = query.lte('consumed_at', filters.dateTo);
     }
 
     // Apply pagination
@@ -143,6 +143,16 @@ export class DrinkService {
   }
 
   async getRecentDrinks(limit: number = 5): Promise<Drink[]> {
-    return this.getAllDrinks({}, limit, 0);
+    const { data, error } = await supabase
+      .from('drinks')
+      .select('*')
+      .order('consumed_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return data || [];
   }
 } 

@@ -74,10 +74,7 @@
 	}
 
 	function formatCurrency(amount: number): string {
-		return new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD'
-		}).format(amount);
+		return `₹${amount.toFixed(2)}`;
 	}
 
 	function formatDate(dateString: string): string {
@@ -108,16 +105,6 @@
 			Special: 'shadow-red-500'
 		};
 		return glows[series] || 'shadow-gray-500';
-	}
-
-	function getRatingStars(rating: number): string {
-		const fullStars = Math.floor(rating);
-		const hasHalfStar = rating % 1 >= 0.5;
-		return (
-			'★'.repeat(fullStars) +
-			(hasHalfStar ? '☆' : '') +
-			'☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0))
-		);
 	}
 </script>
 
@@ -179,12 +166,16 @@
 			<h3 class="can-title">{can.name}</h3>
 
 			<!-- Series Badge with 3D Effect -->
-			<div
-				class="series-badge bg-gradient-to-r {getSeriesGradient(
-					can.series
-				)} shadow-lg {getSeriesGlow(can.series)}"
-			>
-				<span class="series-text">{can.series}</span>
+			<div class="series-badge-wrapper">
+				<div
+					class="series-badge bg-gradient-to-r {getSeriesGradient(
+						can.series
+					)} shadow-lg {getSeriesGlow(can.series)}"
+				>
+					<span class="series-text">{can.series}</span>
+					<!-- Glossy reflection that appears on hover -->
+					<div class="badge-glossy-reflection"></div>
+				</div>
 			</div>
 
 			<!-- Stats Grid with Glass Cards -->
@@ -206,7 +197,7 @@
 
 				<div class="stat-card">
 					<div class="stat-value rating-stars" title="{can.averageRating.toFixed(2)} stars">
-						{getRatingStars(can.averageRating)}
+						{can.averageRating.toFixed(1)}★
 					</div>
 					<div class="stat-label">Rating</div>
 				</div>
@@ -384,14 +375,44 @@
 		background-clip: text;
 	}
 
+	.series-badge-wrapper {
+		@apply mb-4;
+	}
+
 	.series-badge {
-		@apply mb-4 inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold text-white;
+		@apply inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold text-white;
 		@apply border;
+		@apply relative overflow-hidden;
+		@apply transition-all duration-300;
 		border-color: rgba(255, 255, 255, 0.2);
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 		box-shadow:
 			0 4px 8px rgba(0, 0, 0, 0.3),
 			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	}
+
+	.series-badge:hover {
+		transform: translateY(-2px);
+		box-shadow:
+			0 6px 12px rgba(0, 0, 0, 0.4),
+			inset 0 1px 0 rgba(255, 255, 255, 0.3);
+	}
+
+	.badge-glossy-reflection {
+		@apply absolute inset-0 rounded-full;
+		background: linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.4) 0%,
+			rgba(255, 255, 255, 0.2) 25%,
+			transparent 50%
+		);
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+	}
+
+	.series-badge:hover .badge-glossy-reflection {
+		opacity: 1;
 	}
 
 	.series-text {
@@ -414,6 +435,12 @@
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.1),
 			0 2px 4px rgba(0, 0, 0, 0.2);
+		min-height: 60px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
 	}
 
 	.stat-card:hover {
@@ -425,11 +452,17 @@
 	.stat-value {
 		@apply text-sm font-bold text-white;
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+		word-break: keep-all;
+		overflow-wrap: normal;
 	}
 
 	.rating-stars {
 		@apply text-yellow-400;
 		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+		font-size: 13px !important;
+		line-height: 1.2;
+		display: inline-block;
+		font-weight: 600;
 	}
 
 	.stat-label {

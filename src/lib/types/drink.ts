@@ -14,7 +14,7 @@ export interface DrinkFormData {
   cost: number;
   rating: number;
   notes?: string;
-  created_at?: string;
+  consumed_at?: string;
 }
 
 export interface DrinkStats {
