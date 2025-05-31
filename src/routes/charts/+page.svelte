@@ -72,7 +72,12 @@
 
 <div class="skeumorphic-page">
 	<div class="page-header">
-		<h1 class="page-title">📊 Analytics Dashboard</h1>
+		<div class="mb-4 flex items-center justify-center space-x-3">
+			<div class="metal-logo flex h-10 w-10 items-center justify-center rounded-lg">
+				<span class="text-xl font-bold text-white drop-shadow">M</span>
+			</div>
+			<h1 class="page-title">Analytics Dashboard</h1>
+		</div>
 		<p class="page-description">Visualize your Monster Energy consumption patterns and insights</p>
 	</div>
 
@@ -183,11 +188,21 @@
 		margin-bottom: 32px;
 	}
 
+	/* Metal Logo - Green "M" box */
+	.metal-logo {
+		background: linear-gradient(135deg, #16a34a 0%, #15803d 50%, #14532d 100%);
+		border: 1px solid #14532d;
+		box-shadow:
+			0 4px 8px rgba(21, 128, 61, 0.4),
+			inset 0 1px 0 rgba(255, 255, 255, 0.3),
+			0 1px 0 rgba(255, 255, 255, 0.1);
+	}
+
 	.page-title {
 		font-size: 2.5rem;
 		font-weight: 700;
 		color: rgba(255, 255, 255, 0.95);
-		margin-bottom: 8px;
+		margin-bottom: 0;
 		text-shadow:
 			0 2px 4px rgba(0, 0, 0, 0.8),
 			0 4px 8px rgba(0, 0, 0, 0.4);

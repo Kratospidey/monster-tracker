@@ -47,11 +47,11 @@
 	}
 
 	const arcGenerator = arc<any>()
-		.innerRadius(80) // Makes it a donut chart
-		.outerRadius(150)
+		.innerRadius(65) // Makes it a donut chart
+		.outerRadius(120)
 		.cornerRadius(5);
 
-	const arcGeneratorHover = arc<any>().innerRadius(75).outerRadius(155).cornerRadius(5);
+	const arcGeneratorHover = arc<any>().innerRadius(65).outerRadius(130).cornerRadius(5);
 
 	function handleMouseMove(event: MouseEvent, d: any) {
 		if (!chartContainer) return;
@@ -95,75 +95,118 @@
 <div class="skeumorphic-chart-container" bind:this={chartContainer}>
 	<h3 class="skeumorphic-chart-title">{title}</h3>
 
-	<div class="chart-wrapper donut-chart-wrapper" style="height: 380px;">
+	<div class="chart-wrapper" style="height: 340px;">
 		{#if pieData.length > 0}
-			<svg viewBox="-180 -180 360 360" class="chart-svg" preserveAspectRatio="xMidYMid meet">
-				<defs>
+			<div class="donut-chart">
+				<svg viewBox="0 0 360 340" class="chart-svg">
+					<defs>
+						{#each pieData as slice, i}
+							{@const sliceColor = getSeriesColor(slice.data.series)}
+							<linearGradient id={`sliceGradient${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
+								<stop offset="0%" style="stop-color:{sliceColor};stop-opacity:1" />
+								<stop offset="50%" style="stop-color:{sliceColor};stop-opacity:0.8" />
+								<stop offset="100%" style="stop-color:{sliceColor};stop-opacity:0.6" />
+							</linearGradient>
+						{/each}
+
+						<filter id="sliceShadow">
+							<feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.4" />
+						</filter>
+
+						<filter id="sliceGlow">
+							<feGaussianBlur stdDeviation="3" result="coloredBlur" />
+							<feMerge>
+								<feMergeNode in="coloredBlur" />
+								<feMergeNode in="SourceGraphic" />
+							</feMerge>
+						</filter>
+
+						<linearGradient id="centerBg" x1="0%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0%" style="stop-color:rgba(255,255,255,0.1);stop-opacity:1" />
+							<stop offset="100%" style="stop-color:rgba(0,0,0,0.2);stop-opacity:1" />
+						</linearGradient>
+					</defs>
+
+					<!-- Chart background circle -->
+					<circle
+						cx="180"
+						cy="170"
+						r="155"
+						fill="none"
+						stroke="rgba(255,255,255,0.1)"
+						stroke-width="2"
+					/>
+
+					<!-- Donut slices -->
+					<g transform="translate(180, 170)">
+						{#each pieData as slice, i}
+							{@const isHovered = hoveredSlice === slice}
+							<path
+								d={isHovered ? arcGeneratorHover(slice) : arcGenerator(slice)}
+								fill="url(#sliceGradient{i})"
+								stroke="rgba(255,255,255,0.3)"
+								stroke-width="2"
+								filter="url(#sliceShadow)"
+								class="donut-slice"
+								class:hovered={isHovered}
+								on:mouseenter={(e) => handleMouseMove(e, slice)}
+								on:mouseleave={handleMouseLeave}
+								role="button"
+								tabindex="0"
+							/>
+						{/each}
+					</g>
+
+					<!-- Center circle with summary -->
+					<circle
+						cx="180"
+						cy="170"
+						r="75"
+						fill="url(#centerBg)"
+						stroke="rgba(255,255,255,0.2)"
+						stroke-width="2"
+						filter="url(#sliceShadow)"
+					/>
+
+					<!-- Center text -->
+					<text
+						x="180"
+						y="155"
+						text-anchor="middle"
+						fill="rgba(255,255,255,0.9)"
+						font-size="14"
+						font-weight="600"
+						class="center-text"
+					>
+						Total Cans
+					</text>
+					<text
+						x="180"
+						y="175"
+						text-anchor="middle"
+						fill="#10b981"
+						font-size="26"
+						font-weight="700"
+						class="center-number"
+					>
+						{totalCans}
+					</text>
+				</svg>
+
+				<!-- Legend -->
+				<div class="legend">
 					{#each pieData as slice, i}
 						{@const sliceColor = getSeriesColor(slice.data.series)}
-						<linearGradient id={`sliceGradient${i}`} x1="0%" y1="0%" x2="100%" y2="100%">
-							<stop offset="0%" style="stop-color:{sliceColor};stop-opacity:1" />
-							<stop offset="100%" style="stop-color:{sliceColor};stop-opacity:0.7" />
-						</linearGradient>
+						<div class="legend-item">
+							<div
+								class="legend-color"
+								style="background: linear-gradient(135deg, {sliceColor}, {sliceColor}88);"
+							></div>
+							<span class="legend-text">{slice.data.name} ({slice.data.value})</span>
+							<span class="legend-percentage">{getPercentage(slice.data.value, totalCans)}</span>
+						</div>
 					{/each}
-					<filter id="donutSliceShadow">
-						<feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.3" />
-					</filter>
-					<linearGradient id="donutCenterBg" x1="0%" y1="0%" x2="100%" y2="100%">
-						<stop offset="0%" style="stop-color:rgba(50,50,50,0.8);stop-opacity:1" />
-						<stop offset="100%" style="stop-color:rgba(30,30,30,0.9);stop-opacity:1" />
-					</linearGradient>
-				</defs>
-
-				<g class="slices-group">
-					{#each pieData as slice, i}
-						{@const isHovered = hoveredSlice === slice}
-						<path
-							d={isHovered ? arcGeneratorHover(slice) : arcGenerator(slice)}
-							fill={`url(#sliceGradient${i})`}
-							stroke="rgba(255,255,255,0.2)"
-							stroke-width="1.5"
-							filter="url(#donutSliceShadow)"
-							class="donut-slice"
-							class:hovered={isHovered}
-							on:mouseenter={(e) => handleMouseMove(e, slice)}
-							on:mouseleave={handleMouseLeave}
-							role="button"
-							tabindex="0"
-						/>
-					{/each}
-				</g>
-
-				<circle
-					cx="0"
-					cy="0"
-					r="70"
-					fill="url(#donutCenterBg)"
-					stroke="rgba(255,255,255,0.1)"
-					stroke-width="1"
-				/>
-				<text x="0" y="-5" text-anchor="middle" class="center-text-total">{totalCans}</text>
-				<text x="0" y="15" text-anchor="middle" class="center-text-label">Total Cans</text>
-			</svg>
-
-			<!-- Legend -->
-			<div class="donut-legend scrollable-legend">
-				{#each pieData as slice}
-					{@const sliceColor = getSeriesColor(slice.data.series)}
-					<div
-						class="legend-item"
-						title="{slice.data.name}: {slice.data.value} cans ({getPercentage(
-							slice.data.value,
-							totalCans
-						)})"
-					>
-						<div class="legend-color" style="background-color:{sliceColor};"></div>
-						<span class="legend-name truncate">{slice.data.name}</span>
-						<span class="legend-value"
-							>({slice.data.value} | {getPercentage(slice.data.value, totalCans)})</span
-						>
-					</div>
-				{/each}
+				</div>
 			</div>
 		{:else}
 			<div class="empty-chart">
@@ -172,15 +215,10 @@
 		{/if}
 	</div>
 
-	<!-- Tooltip (Chart-Relative) -->
+	<!-- Custom tooltip -->
 	{#if tooltip.visible && tooltip.data}
-		<div
-			class="chart-tooltip"
-			class:tooltip-top={tooltip.position === 'top'}
-			class:tooltip-bottom={tooltip.position === 'bottom'}
-			style="left: {tooltip.x}px; top: {tooltip.y}px;"
-		>
-			<div class="tooltip-header" style="color: {getSeriesColor(tooltip.data.series)};">
+		<div class="skeumorphic-tooltip" style="left: {tooltip.x + 10}px; top: {tooltip.y - 10}px;">
+			<div class="tooltip-header">
 				<strong>{tooltip.data.name}</strong>
 			</div>
 			<div class="tooltip-content">
@@ -194,118 +232,127 @@
 <style>
 	.skeumorphic-chart-container {
 		position: relative;
-		background: linear-gradient(145deg, rgba(40, 40, 40, 0.8), rgba(20, 20, 20, 0.9));
+		background: linear-gradient(
+			145deg,
+			rgba(255, 255, 255, 0.15) 0%,
+			rgba(255, 255, 255, 0.08) 100%
+		);
 		border: 1px solid rgba(255, 255, 255, 0.1);
-		border-radius: 16px;
+		border-radius: 12px;
 		padding: 20px;
 		box-shadow:
-			0 10px 30px rgba(0, 0, 0, 0.5),
-			inset 0 1px 1px rgba(255, 255, 255, 0.1);
-		backdrop-filter: blur(10px);
+			0 8px 24px rgba(0, 0, 0, 0.4),
+			0 4px 12px rgba(0, 0, 0, 0.3),
+			0 2px 6px rgba(0, 0, 0, 0.2),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2),
+			0 1px 0 rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
 	}
 
 	.skeumorphic-chart-title {
 		color: rgba(255, 255, 255, 0.9);
-		font-size: 1.1rem;
+		font-size: 18px;
 		font-weight: 600;
-		margin-bottom: 15px;
+		margin-bottom: 16px;
 		text-align: center;
-		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 	}
 
-	.donut-chart-wrapper {
+	.chart-wrapper {
+		position: relative;
+		background: linear-gradient(
+			135deg,
+			rgba(0, 0, 0, 0.2) 0%,
+			rgba(255, 255, 255, 0.05) 50%,
+			rgba(0, 0, 0, 0.2) 100%
+		);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 8px;
+		box-shadow:
+			inset 0 1px 3px rgba(0, 0, 0, 0.4),
+			inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+		overflow: hidden;
+	}
+
+	.donut-chart {
 		display: flex;
-		flex-direction: column; /* Changed from row to column for legend below */
 		align-items: center;
-		gap: 15px; /* Gap between chart and legend */
+		justify-content: space-between;
+		height: 100%;
+		padding: 20px;
 	}
 
 	.chart-svg {
-		max-width: 100%;
-		max-height: 250px; /* Max height for the SVG */
-		overflow: visible;
+		width: 360px;
+		height: 340px;
+		flex-shrink: 0;
 	}
 
 	.donut-slice {
 		cursor: pointer;
-		transition:
-			transform 0.2s ease-out,
-			filter 0.2s ease-out;
+		transition: all 0.2s ease;
 	}
 
+	.donut-slice:hover,
 	.donut-slice.hovered {
-		transform: scale(1.05);
-		filter: brightness(1.2) drop-shadow(0 0 10px rgba(200, 200, 255, 0.5));
+		filter: url(#sliceGlow);
+		stroke-width: 3;
 	}
 
-	.center-text-total {
-		fill: #fff;
-		font-size: 2.5em;
-		font-weight: bold;
-		dominant-baseline: middle;
+	.center-text {
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+	}
+
+	.center-number {
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 	}
 
-	.center-text-label {
-		fill: rgba(200, 200, 200, 0.8);
-		font-size: 0.8em;
-		dominant-baseline: middle;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.donut-legend {
-		width: 100%;
-		max-height: 100px; /* Max height for legend, enables scrolling */
-		overflow-y: auto;
-		padding-right: 10px; /* For scrollbar */
+	.legend {
 		display: flex;
 		flex-direction: column;
-		gap: 6px;
-	}
-
-	.scrollable-legend::-webkit-scrollbar {
-		width: 5px;
-	}
-	.scrollable-legend::-webkit-scrollbar-track {
-		background: rgba(255, 255, 255, 0.05);
-		border-radius: 10px;
-	}
-	.scrollable-legend::-webkit-scrollbar-thumb {
-		background: rgba(255, 255, 255, 0.2);
-		border-radius: 10px;
-	}
-	.scrollable-legend::-webkit-scrollbar-thumb:hover {
-		background: rgba(255, 255, 255, 0.3);
+		gap: 16px;
+		margin-left: 24px;
+		min-width: 140px;
 	}
 
 	.legend-item {
 		display: flex;
 		align-items: center;
-		font-size: 0.75rem;
-		color: rgba(220, 220, 220, 0.9);
-		cursor: default;
+		gap: 12px;
+		padding: 8px 12px;
+		background: linear-gradient(
+			145deg,
+			rgba(255, 255, 255, 0.08) 0%,
+			rgba(255, 255, 255, 0.03) 100%
+		);
+		border-radius: 8px;
+		border: 1px solid rgba(255, 255, 255, 0.1);
 	}
 
 	.legend-color {
-		width: 12px;
-		height: 12px;
-		border-radius: 3px;
-		margin-right: 8px;
+		width: 18px;
+		height: 18px;
+		border-radius: 6px;
 		border: 1px solid rgba(255, 255, 255, 0.2);
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+		flex-shrink: 0;
 	}
 
-	.legend-name {
-		flex-grow: 1;
-		margin-right: 5px;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.legend-value {
+	.legend-text {
+		color: rgba(255, 255, 255, 0.8);
+		font-size: 14px;
 		font-weight: 500;
-		color: rgba(255, 255, 255, 0.7);
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+		flex: 1;
+	}
+
+	.legend-percentage {
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 12px;
+		font-weight: 400;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+		flex-shrink: 0;
 	}
 
 	.empty-chart {
@@ -313,56 +360,36 @@
 		align-items: center;
 		justify-content: center;
 		height: 100%;
-		min-height: 150px;
 		color: rgba(255, 255, 255, 0.6);
 		font-style: italic;
-		text-align: center;
-		padding: 20px;
 	}
 
-	.chart-tooltip {
-		position: absolute;
+	.skeumorphic-tooltip {
+		position: fixed;
 		z-index: 1000;
-		background: linear-gradient(145deg, rgba(45, 45, 45, 0.95), rgba(25, 25, 25, 0.98));
-		border: 1px solid rgba(255, 255, 255, 0.25);
+		background: linear-gradient(145deg, rgba(30, 30, 30, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
+		border: 1px solid rgba(255, 255, 255, 0.2);
 		border-radius: 8px;
-		padding: 10px 12px;
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
-		backdrop-filter: blur(12px);
-		min-width: 160px;
+		padding: 12px;
+		box-shadow:
+			0 8px 24px rgba(0, 0, 0, 0.6),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+		backdrop-filter: blur(20px);
+		min-width: 150px;
 		pointer-events: none;
-		font-size: 0.8rem;
-	}
-
-	.tooltip-top {
-		transform: translateX(-50%) translateY(-100%) translateY(-12px);
-	}
-
-	.tooltip-bottom {
-		transform: translateX(-50%) translateY(12px);
 	}
 
 	.tooltip-header {
-		font-weight: 700;
-		margin-bottom: 6px;
-		font-size: 0.85rem;
+		color: #10b981;
+		font-weight: 600;
+		margin-bottom: 8px;
+		font-size: 14px;
 		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-		padding-bottom: 4px;
-	}
-
-	.tooltip-content {
-		padding-top: 4px;
 	}
 
 	.tooltip-stat {
-		color: rgba(230, 230, 230, 0.9);
-		margin-bottom: 3px;
-	}
-	.truncate {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		max-width: 150px; /* Adjust as needed for your layout */
+		color: rgba(255, 255, 255, 0.8);
+		font-size: 12px;
+		margin-bottom: 4px;
 	}
 </style>
